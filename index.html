@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset="utf-8" />
+<link rel="manifest" href="manifest.json">
+<style type="text/css">
+*{
+	padding:0;
+	margin:0;
+	user-select:none;
+}
+body{
+	min-height:100vh;
+}
+table{
+	border-collapse:collapse;
+	border:1px solid #000;
+	margin:10px 20px;
+}
+table td,table th{
+	font-size:40px;
+	border:1px solid #000;
+	text-align:center;
+	padding: 5px 10px;
+}
+.letterInfo{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	flex-direction:column;
+}
+.letterCardContainer{
+	display:flex;
+	align-items:center;
+	justify-content:space-around;
+	flex-wrap:wrap;
+}
+.letterCard{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	border: 5px outset #aaa;
+	border-bottom-width:10px;
+	border-radius:10px;
+	transition:all 100ms linear;
+	background:#cdd;
+	min-width:180px;
+	min-height:180px;
+	margin:15px 5px;
+}
+.letterCard:active,
+.letterCard.active{
+	border-style:inset;
+	background:#cceded;
+	border-bottom-width:5px;
+	border-top-width:6px;
+}
+.letterCard.active{
+	border-color:lightgreen;
+}
+.letterCard .letterContent{
+	position:relative;
+	width:100%;
+	height:100%;
+}
+.letterCard .letterContent .letterWithTashkeel,
+.letterCard .letterContent .letterWithoutTashkeel{
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform: translate(-50%, -50%);
+}
+.letterCard .letterContent .letterWithTashkeel,
+.letterCard .letterContent .letterWithoutTashkeel,
+.letterCard .letterContent .letterWithoutAbsolute{
+	font-size:80px;
+	font-weight:900;
+	text-align:center;
+}
+.letterCard .letterContent .letterWithoutAbsolute{
+	color:transparent;
+}
+.letterCard .letterContent .letterWithTashkeel{
+	color:red;
+	z-index:1;
+}
+.letterCard .letterContent .letterWithoutTashkeel{
+	z-index:2;
+}
+.letterCard .letterContent .grayText{
+	color:rgba(100,100,100,0.3);
+}
+</style>
+</head>
+<body dir="rtl">
+<section class="letterInfo">
+<table>
+<tr>
+	<th colspan="3">ب</th>
+</tr>
+<tr>
+	<td>بـ</td>
+	<td>ـبـ</td>
+	<td>ـب</td>
+</tr>
+</table>
+<div class="letterCardContainer">
+<div class="letterCard" data-audio="ba.mp3">
+	<div class="letterContent">
+		<div class="letterWithoutAbsolute">بَ</div>
+		<div class="letterWithTashkeel">بَ</div>
+		<div class="letterWithoutTashkeel">ب</div>
+	</div>
+</div>
+<div class="letterCard" data-audio="bo.mp3">
+	<div class="letterContent">
+		<div class="letterWithoutAbsolute">بُ</div>
+		<div class="letterWithTashkeel">بُ</div>
+		<div class="letterWithoutTashkeel">ب</div>
+	</div>
+</div>
+<div class="letterCard" data-audio="bi.mp3">
+	<div class="letterContent">
+		<div class="letterWithoutAbsolute">بِ</div>
+		<div class="letterWithTashkeel">بِ</div>
+		<div class="letterWithoutTashkeel">ب</div>
+	</div>
+</div>
+<div class="letterCard" data-audio="ab.mp3">
+	<div class="letterContent">
+		<div class="letterWithoutAbsolute"><span class="grayText">أَ</span>بْ</div>
+		<div class="letterWithTashkeel"><span class="grayText">أَ</span>بْ</div>
+		<div class="letterWithoutTashkeel"><span class="grayText">أَ</span>ب</div>
+	</div>
+</div>
+</div>
+</section>
+<script>
+	if ('serviceWorker' in navigator) {
+	  window.addEventListener('load', () => {
+		navigator.serviceWorker.register('/service-worker.js')
+		  .then(registration => {
+			console.log('ServiceWorker registration successful with scope: ', registration.scope);
+		  })
+		  .catch(error => {
+			console.log('ServiceWorker registration failed: ', error);
+		  });
+	  });
+	}
+
+</script>
+<script>
+  // Global variables to track the currently playing audio and its active card.
+  let currentAudio = null;
+  let currentActiveCard = null;
+
+  // Select all elements with the "letterCard" class.
+  const letterCards = document.getElementsByClassName("letterCard");
+
+  // Convert HTMLCollection to Array for easier iteration.
+  Array.from(letterCards).forEach(card => {
+    card.addEventListener("click", function(e) {
+      e.preventDefault();
+
+      // If there's an audio already playing, pause and reset it,
+      // and remove the "active" class from its card.
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        if (currentActiveCard) {
+          currentActiveCard.classList.remove("active");
+        }
+      }
+
+      // Get the audio file name from the data-audio attribute.
+      const audioSrc = this.dataset.audio;
+      // Create a new Audio object with the source.
+      currentAudio = new Audio("audios/"+audioSrc);
+      // Mark this card as the current active card.
+      currentActiveCard = this;
+      
+      // Add the "active" class to show that the letter is being played.
+      this.classList.add("active");
+
+      // When the audio finishes, remove the "active" class.
+      currentAudio.addEventListener("ended", () => {
+        this.classList.remove("active");
+        // Reset global references.
+        currentAudio = null;
+        currentActiveCard = null;
+      });
+
+      // Play the audio.
+      currentAudio.play();
+    });
+  });
+</script>
+
+</body>
+</html>
