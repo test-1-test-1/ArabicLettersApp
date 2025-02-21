@@ -8,7 +8,11 @@ const urlsToCache = [
   '/ArabicLettersApp/audios/ba.mp3',
   '/ArabicLettersApp/audios/bo.mp3',
   '/ArabicLettersApp/audios/bi.mp3',
-  '/ArabicLettersApp/audios/ab.mp3'
+  '/ArabicLettersApp/audios/ab.mp3',
+  '/ArabicLettersApp/audios/ta.mp3',
+  '/ArabicLettersApp/audios/to.mp3',
+  '/ArabicLettersApp/audios/ti.mp3',
+  '/ArabicLettersApp/audios/at.mp3'
 ];
 
 self.addEventListener('install', event => {
